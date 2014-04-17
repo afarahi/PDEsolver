@@ -9,25 +9,33 @@
 #include <QPainter>
 
 namespace Ui {
-  class Plot2DWindow;
+   class Plot2DWindow;
 }
 
-class Plot2DWindow:public QMainWindow
-{
-   Q_OBJECT
+class Plot2DWindow:public QMainWindow{
+      Q_OBJECT
    
    public:
+
       explicit Plot2DWindow(QWidget *parent = 0);
+
       bool initialCondition(int width, int height);
+
       void showResult(double* Phi);
+
       ~Plot2DWindow();
    
    private:
-  Ui::Plot2DWindow *ui;
+
+      Ui::Plot2DWindow *ui;
+
       int picWidth, picHeight;
       double* phiMatrix;
+
       QImage *image;
+
       QPainter *paint;
+
       void paintEvent(QPaintEvent *);
    
 };

@@ -51,8 +51,8 @@ SimulationMainWindow2D::SimulationMainWindow2D(){
    resize(720, 480);
 
    // Default values
-   xGridSize = 100;
-   yGridSize = 200;
+   xGridSize = 200;
+   yGridSize = 400;
 
    delaySecond = 0.5;
    realizationTimeStep = 10;
@@ -74,14 +74,13 @@ SimulationMainWindow2D::SimulationMainWindow2D(){
   picture2D = new Plot2DWindow(this);
   exactPicture2D = new Plot2DWindow(this);
 
-  
 }
 
 void SimulationMainWindow2D::contextMenuEvent(QContextMenuEvent *event){
    QMenu menu(this);
-   //menu.addAction(cutAct);
-   //menu.addAction(copyAct);
-   //menu.addAction(pasteAct);
+   menu.addAction(runAct);
+   menu.addAction(pauseAct);
+   menu.addAction(restartAct);
    menu.exec(event->globalPos());
 }
 
@@ -133,11 +132,11 @@ void SimulationMainWindow2D::runSimulation(){
                     + saveFileNameExact ;
          simulation->saveSnapShotExactSolution(fileName.toStdString());
 
-        picture2D->showResult(simulation->returnPhi());
-        picture2D->show();
+         picture2D->showResult(simulation->returnPhi());
+         picture2D->show();
         
-        exactPicture2D->showResult(simulation->returnExactPhi());
-        exactPicture2D->show();
+         exactPicture2D->showResult(simulation->returnExactPhi());
+         exactPicture2D->show();
 
      }
 	  

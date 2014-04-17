@@ -72,9 +72,9 @@ SimulationMainWindow1D::SimulationMainWindow1D(){
 
 void SimulationMainWindow1D::contextMenuEvent(QContextMenuEvent *event){
    QMenu menu(this);
-   //menu.addAction(cutAct);
-   //menu.addAction(copyAct);
-   //menu.addAction(pasteAct);
+   menu.addAction(runAct);
+   menu.addAction(pauseAct);
+   menu.addAction(restartAct);
    menu.exec(event->globalPos());
 }
 

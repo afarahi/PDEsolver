@@ -7,14 +7,14 @@
 
 using namespace std;
 
-Plot2DWindow::Plot2DWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::Plot2DWindow)
-{
+Plot2DWindow::Plot2DWindow(QWidget *parent):
+                           QMainWindow(parent),ui(new Ui::Plot2DWindow){
    ui->setupUi(this);
    paint = new QPainter;
+   setMinimumSize(20, 20);
 }
 
-Plot2DWindow::~Plot2DWindow()
-{
+Plot2DWindow::~Plot2DWindow(){
    delete phiMatrix;
    delete image;
    delete paint;
@@ -22,11 +22,13 @@ Plot2DWindow::~Plot2DWindow()
    cout << "Freeing mem" << endl;
 }
 
-void Plot2DWindow::paintEvent(QPaintEvent *)
-{
+void Plot2DWindow::paintEvent(QPaintEvent *){
+
    int R, G, B;
    int i = 0,j = 0;
+
    double max_ele, min_ele;
+
    // Get min and max value from the Phi Matrix
    max_ele = *(std::max_element(phiMatrix, phiMatrix+picWidth*picHeight));
    min_ele = *(std::min_element(phiMatrix, phiMatrix+picWidth*picHeight));
@@ -50,7 +52,7 @@ void Plot2DWindow::paintEvent(QPaintEvent *)
       }
    }
    //image->scaled(200,200, Qt::IgnoreAspectRatio);
-   paint->drawImage(50,50, *image);
+   paint->drawImage(10,10, *image);
    paint->end();
    
 }
@@ -59,6 +61,7 @@ bool Plot2DWindow::initialCondition(int width, int height)
 {
    picWidth = width;
    picHeight = height;
+   resize(picWidth+20,picHeight+20);
    return true;
 }
 
