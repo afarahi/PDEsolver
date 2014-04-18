@@ -50,16 +50,16 @@ SimulationMainWindow1D::SimulationMainWindow1D(){
    resize(720, 480);
   
    // Default Values
-   gridSize = 100;
-   delaySecond = 0.5;
-   realizationTimeStep = 10;
+   gridSize = GridSizeDefault;
+   delaySecond = DelaySecondDefault;
+   realizationTimeStep = RealizationTimeStepDefault;
 
-   initialConditionName = "Sin";
+   initialConditionName = InitialConditionNameDefault;
   
-   mainSolverName = "RK4";
-   fluxSolverName = "LinearReconstruction";
+   mainSolverName = MainSolverDefault;
+   fluxSolverName = FluxSolverDefault;
 
-   simulationErrorTolerance = 1e-1;
+   simulationErrorTolerance = SimulationErrorToleranceDefault;
   
    // Plotting windows
    pwSimulation = new Plot1D(this);
@@ -79,14 +79,7 @@ void SimulationMainWindow1D::contextMenuEvent(QContextMenuEvent *event){
 }
 
 void SimulationMainWindow1D::runSimulation(){
-
-//   pwSimulation->show();
-//   pwError->show();
-
-   //delete pw; 
-   //MainWindow pw = new MainWindow(this);
-   //pw.show();
-    
+  
    simIsRunning = true;
    simulationTime = simulation->getActualTime();
    simulationErr  = simulation->calcErrorNorm();
@@ -127,14 +120,11 @@ void SimulationMainWindow1D::runSimulation(){
                     + saveFileNameExact ;
          simulation->saveSnapShotExactSolution(fileName_ex.toStdString());
 
-
          pwSimulation->setThePlot(fileName.toStdString(),fileName_ex.toStdString(),gridSize);
          pwSimulation->show();
-
          pwError->setThePlot_error(fileName.toStdString(),fileName_ex.toStdString(),gridSize);
          pwError->show();
          delay();
-
 
 	  }
 	  
@@ -187,15 +177,11 @@ void SimulationMainWindow1D::restartSimulation(){
 }
 
 void SimulationMainWindow1D::about(){
-   infoLabel->setText(tr("Invoked <b>Help|About</b>"));
    QMessageBox::about(this, tr("About Menu"),
-                     tr("The <b>Menu</b> example shows how to create "
-                        "menu-bar menus and context menus."));
+                     tr("This is one dimentional convection PDE solver  "
+                 "developed for the final project of EECS 402 in 2014."));
 }
 
-void SimulationMainWindow1D::aboutQt(){
-   infoLabel->setText(tr("Invoked <b>Help|About Qt</b>"));
-}
 
 void SimulationMainWindow1D::createActions(){
   
@@ -208,11 +194,6 @@ void SimulationMainWindow1D::createActions(){
    aboutAct->setStatusTip(tr("Show the application's About box"));
    connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
   
-   aboutQtAct = new QAction(tr("About &Qt"), this);
-   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
-   connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-   connect(aboutQtAct, SIGNAL(triggered()), this, SLOT(aboutQt()));
-
    // Simulation menu actions 
    runAct = new QAction(tr("&Run"), this);
    runAct->setShortcut(tr("Ctrl+Alt+R"));
@@ -358,7 +339,7 @@ void SimulationMainWindow1D::createMenus(){
 
    fluxSolverMenu = InputMenu->addMenu(tr("&Flux Solver"));
    fluxSolverMenu->addSeparator()->setText(tr("Alignment"));
-   fluxSolverMenu->addAction(setMUSCLSAct);
+   //fluxSolverMenu->addAction(setMUSCLSAct);
    fluxSolverMenu->addAction(setLinearReconstructionAct);
    fluxSolverMenu->addAction(setPiecewiseParabolicReconstructionAct);
    fluxSolverMenu->addSeparator();
@@ -370,12 +351,11 @@ void SimulationMainWindow1D::createMenus(){
    mainSolverMenu->addAction(setForwardEulerAct);
    mainSolverMenu->addAction(setLaxFriedrichsAct);
    mainSolverMenu->addAction(setKurganovTadmor2000Act);
-   mainSolverMenu->addAction(setRK4KurganovTadmor2000Act);
-   mainSolverMenu->addAction(setKurganovTadmor2ndOrder2000Act);
+   //mainSolverMenu->addAction(setRK4KurganovTadmor2000Act);
+   //mainSolverMenu->addAction(setKurganovTadmor2ndOrder2000Act);
 
    helpMenu = menuBar()->addMenu(tr("&Help"));
    helpMenu->addAction(aboutAct);
-   helpMenu->addAction(aboutQtAct);
   
 }
 
@@ -489,8 +469,6 @@ void SimulationMainWindow1D::setForwardEulerScheme(){
    restartSimulation();
 }
 
-
-
 // Setting the flux solver
 void SimulationMainWindow1D::setMUSCLSScheme(){
    fluxSolverName =  "MUSCLS";
@@ -506,7 +484,6 @@ void SimulationMainWindow1D::setPiecewiseParabolicReconstructionScheme(){
    fluxSolverName =  "PiecewiseParabolicReconstruction";
    restartSimulation();
 }
-
 
 // Delay function
 void SimulationMainWindow1D::delay(){

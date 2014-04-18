@@ -39,6 +39,7 @@ SimulationMainWindow2D::SimulationMainWindow2D(){
    layout->addWidget(bottomFiller);
    widget->setLayout(layout);
 
+
    createActions();
    createMenus();
    createButtons();
@@ -51,29 +52,29 @@ SimulationMainWindow2D::SimulationMainWindow2D(){
    resize(720, 480);
 
    // Default values
-   xGridSize = 200;
-   yGridSize = 400;
+   xGridSize = XGridSizeDefault;
+   yGridSize = YGridSizeDefault;
 
-   delaySecond = 0.5;
-   realizationTimeStep = 10;
+   delaySecond = DelaySecondDefault;
+   realizationTimeStep = RealizationTimeStepDefault;
 
    gridSize  = xGridSize * yGridSize;
 
-   vx = 1.0;
-   vy = 1.0;
+   vx = XVelocityDefault;
+   vy = YVelocityDefault;
 
-   mainSolverName = "RK4";
-   fluxSolverName = "LinearReconstruction";
+   mainSolverName = MainSolverDefault;
+   fluxSolverName = FluxSolverDefault;
 
-   simulationErrorTolerance = 1e-2;
+   simulationErrorTolerance = SimulationErrorToleranceDefault;
 
    simulation = new Simulation2DClass;
    restartSimulation();
   
-  // Create 2D plot window
-  picture2D = new Plot2DWindow(this);
-  exactPicture2D = new Plot2DWindow(this);
-
+   // Create 2D plot window
+   picture2D = new Plot2DWindow(this);
+   exactPicture2D = new Plot2DWindow(this);
+  
 }
 
 void SimulationMainWindow2D::contextMenuEvent(QContextMenuEvent *event){
@@ -134,9 +135,13 @@ void SimulationMainWindow2D::runSimulation(){
 
          picture2D->showResult(simulation->returnPhi());
          picture2D->show();
-        
-         exactPicture2D->showResult(simulation->returnExactPhi());
+         picture2D->repaint();
+         exactPicture2D->showError(simulation->returnExactPhi(),simulation->returnPhi());
+         //exactPicture2D->showResult(simulation->returnExactPhi());
          exactPicture2D->show();
+         exactPicture2D->repaint();
+         
+         delay();
 
      }
 	  
@@ -158,12 +163,13 @@ void SimulationMainWindow2D::pauseSimulation(){
 
 void SimulationMainWindow2D::restartSimulation(){
 
+   //picture2D->close();
+   //exactPicture2D->close();
+   
    simIterator    = 0;
    simulationTime = 0.0;
    simulationErr  = 0.0;
    simIsRunning   = false;
-
-   cout << "Simulation is restarted" << endl;
 
    infoLabel->setText(tr("Simulation is restarted and ready to run."));
 
@@ -192,14 +198,8 @@ void SimulationMainWindow2D::restartSimulation(){
 }
 
 void SimulationMainWindow2D::about(){	
-   infoLabel->setText(tr("Invoked <b>Help|About</b>"));
    QMessageBox::about(this, tr("About Menu"),
-             tr("The <b>Menu</b> example shows how to create "
-                "menu-bar menus and context menus."));
-}
-
-void SimulationMainWindow2D::aboutQt(){
-   infoLabel->setText(tr("Invoked <b>Help|About Qt</b>"));
+             tr("This is 2 dimentional version of PDE solver."));
 }
 
 void SimulationMainWindow2D::createActions(){
@@ -217,11 +217,6 @@ void SimulationMainWindow2D::createActions(){
    aboutAct = new QAction(tr("&About"), this);
    aboutAct->setStatusTip(tr("Show the application's About box"));
    connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
-
-   aboutQtAct = new QAction(tr("About &Qt"), this);
-   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
-   connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-   connect(aboutQtAct, SIGNAL(triggered()), this, SLOT(aboutQt()));
 
    // Simulation actions
    runAct = new QAction(tr("&Run"), this);
@@ -255,8 +250,27 @@ void SimulationMainWindow2D::createActions(){
    realizationTimeStepAct = new QAction(tr("&Realization Time Step"), this);
    connect(realizationTimeStepAct, SIGNAL(triggered()),
            this, SLOT(setRealizationTimeStep()));
+    
+   // Coloring Scheme 
+   setBWAct = new QAction(tr("&Black and White"), this);
+   connect(setBWAct, SIGNAL(triggered()), this, SLOT(setColoringSchemeBW()));
 
-   // Setting the initial condition
+   setBlueAct = new QAction(tr("&Blue"), this);
+   connect(setBlueAct, SIGNAL(triggered()), this,
+           SLOT(setColoringSchemeBlue()));
+
+   setColAct = new QAction(tr("&Colorful"), this);
+   connect(setColAct, SIGNAL(triggered()), this, SLOT(setColoringSchemeCol()));
+
+   setHotAct = new QAction(tr("&Hot"), this);
+   connect(setHotAct, SIGNAL(triggered()), this, SLOT(setColoringSchemeHot()));
+
+   coloringSchemeGroup = new QActionGroup(this);
+   coloringSchemeGroup->addAction(setBWAct);
+   coloringSchemeGroup->addAction(setColAct);
+   coloringSchemeGroup->addAction(setBlueAct);
+   coloringSchemeGroup->addAction(setHotAct);
+   setBWAct->setChecked(true);
   
    // Setting main solver
    setLaxFriedrichsAct = new QAction(tr("Lax-FriedRichs Scheme"), this);
@@ -321,9 +335,14 @@ void SimulationMainWindow2D::createMenus(){
    mainSolverMenu->addAction(setForwardEulerAct);
    mainSolverMenu->addAction(setLaxFriedrichsAct);
 
+   coloringSchemeMenu = menuBar()->addMenu(tr("&Coloring Scheme"));
+   coloringSchemeMenu->addAction(setBWAct);
+   coloringSchemeMenu->addAction(setBlueAct);
+   coloringSchemeMenu->addAction(setColAct);
+   coloringSchemeMenu->addAction(setHotAct);
+
    helpMenu = menuBar()->addMenu(tr("&Help"));
    helpMenu->addAction(aboutAct);
-   helpMenu->addAction(aboutQtAct);
 
 }
 
@@ -421,6 +440,27 @@ void SimulationMainWindow2D::setRealizationTimeStep(){
 }
 
 
+//Setting Coloring Scheme
+void SimulationMainWindow2D::setColoringSchemeBW(){
+   picture2D->setColoringScheme("BlackWhite");
+   exactPicture2D->setColoringScheme("BlackWhite");	
+}
+
+void SimulationMainWindow2D::setColoringSchemeCol(){
+   picture2D->setColoringScheme("Colorful");
+   exactPicture2D->setColoringScheme("Colorful");	
+}
+
+void SimulationMainWindow2D::setColoringSchemeBlue(){
+   picture2D->setColoringScheme("Blue");
+   exactPicture2D->setColoringScheme("Blue");	
+}
+
+void SimulationMainWindow2D::setColoringSchemeHot(){
+   picture2D->setColoringScheme("Hot");
+   exactPicture2D->setColoringScheme("Hot");	
+}
+
 // Delay function
 void SimulationMainWindow2D::delay(){
    QTime dieTime= QTime::currentTime().addMSecs(1000.0*delaySecond);
@@ -430,7 +470,8 @@ void SimulationMainWindow2D::delay(){
 }
 
 void SimulationMainWindow2D::setFilePath(){
-  QString inputFileName = QFileDialog::getOpenFileName(this, tr("Open Image"), ".", tr("Image Files(*.png *.jpg *.bmp)"));
+  QString inputFileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
+                          ".", tr("Image Files(*.png *.jpg *.bmp)"));
   filePath = inputFileName;
   restartSimulation();
 }

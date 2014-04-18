@@ -13,6 +13,7 @@
 using namespace std;
 #include "../FieldsDefinition/Field2DClass.h"
 #include "../Simulation/Simulation2DClass.h"
+#include "../constants.h"
 #include "./Plot2D.h"
 
 class QAction;
@@ -37,7 +38,6 @@ protected:
 private slots:
 
    void about();
-   void aboutQt();
    void setFilePath();
 
    // Simulation modules
@@ -59,7 +59,13 @@ private slots:
 
    // Setting Flux Solver (string)
    void setLinearReconstructionScheme();
-    
+
+   //Setting ColoringScheme
+   void setColoringSchemeBW();
+   void setColoringSchemeBlue();
+   void setColoringSchemeHot();
+   void setColoringSchemeCol();
+
 private:
 
    // 2D plot file path
@@ -101,10 +107,12 @@ private:
    QMenu *initialConditionMenu;
    QMenu *fluxSolverMenu;
    QMenu *mainSolverMenu;
+   QMenu *coloringSchemeMenu;
 
    QActionGroup *solverGroup;
    QActionGroup *fluxGroup;
    QActionGroup *initialConditionGroup;
+   QActionGroup *coloringSchemeGroup;
 
    QAction *exitAct;
    QAction *aboutAct;
@@ -127,6 +135,12 @@ private:
    QAction *velocityYAct;
    QAction *realizationTimeStepAct;
 
+   // Coloring Scheme 
+   QAction *setColAct;
+   QAction *setBWAct;
+   QAction *setHotAct;
+   QAction *setBlueAct;
+
    // Flux Solver
    QAction *setLinearReconstructionAct;
 
@@ -135,10 +149,10 @@ private:
    QAction *setForwardEulerAct;
    QAction *setLaxFriedrichsAct;
 
-  Plot2DWindow *picture2D;
-  Plot2DWindow *exactPicture2D;
+   Plot2DWindow *picture2D;
+   Plot2DWindow *exactPicture2D;
 
- };
+};
 
 
 #endif

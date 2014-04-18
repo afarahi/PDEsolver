@@ -14,7 +14,6 @@ Simulation2DClass::~Simulation2DClass( ){
 
 bool Simulation2DClass::setMainSolver( string mainSolverSchemeName ){
    if ( mainSolverSchemeName == "LaxFriedrichs" ){
-      cout << "LaxFriedrichs is picked" << endl;
       delete solver;
       solver = new LaxFriedrichsScheme2D;
       return true;

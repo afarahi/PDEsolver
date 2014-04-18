@@ -2,6 +2,7 @@
 #define __FIELDS_2D_CLASS__
 
 #include <cmath>
+#include <random>
 #include <iostream>
 #include <fstream>
 #include <string>

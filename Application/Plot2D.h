@@ -3,16 +3,19 @@
 
 #include <QMainWindow>
 #include "./QCustomPlot/qcustomplot.h"
+#include "./ColoringSchemeClass/ColoringSchemeClass.h"
 
 #include <QApplication>
 #include <QWidget>
 #include <QPainter>
 
+
 namespace Ui {
-   class Plot2DWindow;
+  class Plot2DWindow;
 }
 
 class Plot2DWindow:public QMainWindow{
+
       Q_OBJECT
    
    public:
@@ -21,7 +24,9 @@ class Plot2DWindow:public QMainWindow{
 
       bool initialCondition(int width, int height);
 
+      void setColoringScheme(string schemeName);
       void showResult(double* Phi);
+      void showError(double* ExactPhi, double* NumericalPhi);
 
       ~Plot2DWindow();
    
@@ -33,10 +38,14 @@ class Plot2DWindow:public QMainWindow{
       double* phiMatrix;
 
       QImage *image;
-
       QPainter *paint;
-
+      QRectF *colorBar;
+      ColoringSchemeClass *coloringScheme;
+      
       void paintEvent(QPaintEvent *);
+
+      double max_ele, min_ele;
    
 };
+
 #endif

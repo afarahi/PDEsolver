@@ -14,6 +14,7 @@ using namespace std;
 #include "../FieldsDefinition/Field1DClass.h"
 #include "../Simulation/Simulation1DClass.h"
 #include "./QCustomPlot/qcustomplot.h"
+#include "../constants.h"
 #include "./Plot1D.h"
 
 class QAction;
@@ -38,7 +39,6 @@ protected:
 private slots:
 
    void about();
-   void aboutQt();
 
    void runSimulation();
    void pauseSimulation();
